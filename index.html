@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Izhar Ahmad, firmware engineer working on RISC-V bootloaders, drivers and toolchains, applying to Canonical's Graduate Software Engineer programme.">
+<meta property="og:title" content="Izhar Ahmad · Graduate Engineer">
+<meta property="og:description" content="Firmware engineer working from the reset vector up: RISC-V, Zephyr, Linux.">
+<meta property="og:type" content="website">
+<style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Izhar Ahmad · Graduate Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sibling of the personal portfolio, retold as a walk up the software stack. Serif headlines and photos carry the person; a boot log and a layered stack diagram carry the engineering. */
+:root{
+  --bg:#F3F5F2; --surface:#FFFFFF; --ink:#17201C; --soft:#56635D; --line:#DAE0DA;
+  --accent:#1E7558; --term:#122019; --termink:#BFE9D3; --termdim:#6F9384; --termkey:#E8C27A; --todo:#B5612A; --shade:rgba(16,24,20,.07);
+  --f-display:"Instrument Serif","Iowan Old Style",Georgia,serif;
+  --f-body:"Hanken Grotesk","Helvetica Neue",Arial,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0F1513; --surface:#161E1B; --ink:#E7EEEA; --soft:#9BA9A2; --line:#27322D;
+  --accent:#62D2A7; --term:#0A110E; --termink:#BFE9D3; --termdim:#6A8C7E; --todo:#E59262; --shade:rgba(0,0,0,.35); color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0F1513; --surface:#161E1B; --ink:#E7EEEA; --soft:#9BA9A2; --line:#27322D;
+  --accent:#62D2A7; --term:#0A110E; --termink:#BFE9D3; --termdim:#6A8C7E; --todo:#E59262; --shade:rgba(0,0,0,.35); color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:1.0625rem;line-height:1.7;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:1140px;margin:0 auto}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+img,video{max-width:100%}
+p{margin:0;max-width:62ch}
+h1,h2,h3,h4{margin:0}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;letter-spacing:-.01em;text-wrap:balance}
+h2{font-size:clamp(2.2rem,5vw,3.6rem);line-height:1.02}
+h3{font-size:clamp(1.6rem,3vw,2.1rem);line-height:1.08}
+.kicker{font-size:.8rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.muted{color:var(--soft)}
+code,.mono{font-family:var(--f-mono);font-size:.86em}
+
+.fill{color:var(--todo);text-decoration:underline dotted;text-underline-offset:3px}
+.draft{font-size:.78rem;color:var(--todo);padding-block:12px;text-align:right}
+
+.ph{display:block;width:100%;height:100%;object-fit:cover;border-radius:14px;background:var(--line)}
+video.ph{background:#000}
+figure{margin:0;min-width:0}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.25fr .75fr;gap:56px;align-items:end;padding-block:40px 32px}
+.hero > *{min-width:0}
+.hero h1{font-size:clamp(3.4rem,9.5vw,7.6rem);line-height:.9;letter-spacing:-.02em}
+.hero h1 span{display:block;font-style:italic;color:var(--accent)}
+.hero .intro{font-size:1.2rem;margin-top:28px}
+.facts{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:22px;font-size:.92rem;color:var(--soft)}
+.facts b{color:var(--ink);font-weight:600}
+.hero figure .ph{aspect-ratio:4/5;box-shadow:0 30px 60px -30px var(--shade)}
+
+/* boot log */
+.boot{background:var(--term);color:var(--termink);border-radius:16px;padding:22px clamp(16px,3vw,28px);font-family:var(--f-mono);font-size:.82rem;line-height:1.75;overflow-x:auto;margin-top:8px}
+.boot ol{list-style:none;margin:0;padding:0;min-width:560px}
+.boot li{display:grid;grid-template-columns:7.5em 1fr;gap:12px;white-space:nowrap}
+.boot .t{color:var(--termdim);font-variant-numeric:tabular-nums}
+.boot .ok{color:var(--termink)}
+.boot .k{color:var(--termkey)}
+.boot .cur{display:inline-block;width:.6em;height:1.05em;background:var(--termink);vertical-align:-.15em;margin-left:4px}
+@media (prefers-reduced-motion:no-preference){
+  .boot li{animation:line .5s ease-out both}
+  .boot li:nth-child(2){animation-delay:.12s}.boot li:nth-child(3){animation-delay:.24s}.boot li:nth-child(4){animation-delay:.36s}
+  .boot li:nth-child(5){animation-delay:.48s}.boot li:nth-child(6){animation-delay:.6s}.boot li:nth-child(7){animation-delay:.72s}
+  .boot li:nth-child(8){animation-delay:.84s}.boot li:nth-child(9){animation-delay:.96s}
+  @keyframes line{from{opacity:.25}to{opacity:1}}
+  .boot .cur{animation:blink 1.1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+}
+
+/* filmstrip */
+.strip{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(190px,1fr);gap:12px;overflow-x:auto;padding-block:20px 6px;scrollbar-width:thin}
+.strip .ph{aspect-ratio:4/5;border-radius:10px}
+
+/* chapters */
+.chapter{padding-block:96px 0}
+.chapter-head{display:grid;gap:14px;margin-bottom:40px;max-width:760px}
+.chapter-head p{font-size:1.15rem;color:var(--soft)}
+
+/* the stack */
+.stack{display:grid;gap:0;border-top:1px solid var(--line)}
+.layer{display:grid;grid-template-columns:200px minmax(0,1fr) 120px;gap:24px;align-items:baseline;padding-block:22px;border-bottom:1px solid var(--line)}
+.layer .name{font-family:var(--f-mono);font-size:.85rem;font-weight:500;color:var(--ink)}
+.layer .name small{display:block;font-family:var(--f-body);font-size:.8rem;color:var(--soft);font-weight:400;margin-top:2px}
+.layer p{color:var(--soft);font-size:1rem}
+.layer p b{color:var(--ink);font-weight:600}
+.chip{justify-self:end;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:4px 10px;white-space:nowrap;border:1px solid currentColor}
+.chip.work{color:var(--accent)}
+.chip.own{color:var(--ink)}
+.chip.gap{color:var(--todo);border-style:dashed}
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:18px;font-size:.88rem;color:var(--soft);align-items:center}
+.legend .chip{justify-self:auto}
+
+/* work feature */
+.feature{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:48px;align-items:start}
+.feature .media{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;position:sticky;top:24px}
+.feature .media .ph{aspect-ratio:3/4}
+.shipped{list-style:none;margin:28px 0 0;padding:0;display:grid;gap:22px}
+.shipped li{display:grid;gap:4px;border-top:1px solid var(--line);padding-top:16px}
+.shipped h4{font-size:1.05rem;font-weight:600}
+.shipped p{color:var(--soft);font-size:1rem}
+.lang{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+.lang span{font-family:var(--f-mono);font-size:.8rem;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:4px 10px}
+
+/* cubesat */
+.cube{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:48px;align-items:center}
+.cube .main .ph{aspect-ratio:4/5}
+.cube .text{display:grid;gap:18px}
+.numbers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 24px;padding-top:20px;border-top:1px solid var(--line)}
+.numbers div{display:grid;gap:2px}
+.numbers b{font-family:var(--f-display);font-weight:400;font-size:1.7rem;line-height:1.1}
+.numbers small{font-size:.85rem;color:var(--soft)}
+.mosaic{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:40px}
+.mosaic .ph{aspect-ratio:1/1}
+
+/* side projects */
+.bench{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:48px 40px;margin-top:72px}
+.bench article{display:grid;gap:14px;align-content:start;min-width:0}
+.bench .ph{aspect-ratio:4/3}
+.bench .duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.bench .duo .ph{aspect-ratio:1/1}
+.bench h4{font-family:var(--f-display);font-weight:400;font-size:1.7rem;line-height:1.1}
+.bench p{color:var(--soft)}
+
+/* teams */
+.teams{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
+.teams article{display:grid;gap:12px;align-content:start;min-width:0}
+.teams .ph{aspect-ratio:4/3}
+.role{font-family:var(--f-display);font-style:italic;font-size:1.25rem;color:var(--accent);line-height:1.2}
+.teams h4{font-size:1.05rem;font-weight:600}
+.teams p{color:var(--soft);font-size:1rem}
+
+/* community */
+.give{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:32px 48px}
+.give > div{border-top:1px solid var(--line);padding-top:18px;display:grid;gap:8px}
+.give h4{font-size:1.05rem;font-weight:600}
+.give p{color:var(--soft)}
+
+/* academic record */
+.record{background:var(--surface);border-radius:22px;padding:clamp(24px,5vw,56px);display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:40px}
+.record table{width:100%;border-collapse:collapse;font-size:1rem}
+.record th,.record td{text-align:left;padding:14px 0;border-bottom:1px solid var(--line);vertical-align:baseline}
+.record th{font-weight:600;padding-right:16px;width:46%}
+.record th small{display:block;font-weight:400;color:var(--soft);font-size:.85rem}
+.record td{font-variant-numeric:tabular-nums}
+.record tr:last-child th,.record tr:last-child td{border-bottom:0}
+
+/* why */
+.why{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px}
+.why .body{display:grid;gap:16px}
+.fit{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:12px}
+.fit li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:baseline}
+.fit li::before{content:"$";font-family:var(--f-mono);color:var(--accent);font-size:.9rem}
+.life{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px}
+.life span{background:var(--surface);border-radius:999px;padding:8px 16px;font-size:.95rem}
+.life b{font-weight:600}
+
+/* contact */
+.close{padding-block:110px 40px;display:grid;gap:22px}
+.close h2{font-size:clamp(2.6rem,7vw,5.4rem)}
+.contact{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.addr{font-size:1.1rem;user-select:all;overflow-wrap:anywhere;border-bottom:1px solid var(--line);padding-bottom:4px}
+button{font:inherit;font-weight:600;font-size:.9rem;color:var(--bg);background:var(--ink);border:0;border-radius:999px;padding:10px 18px;cursor:pointer}
+button:hover{background:var(--accent)}
+footer{font-size:.8rem;color:var(--soft);padding-block:24px 40px;border-top:1px solid var(--line)}
+
+@media (max-width:860px){
+  .hero,.feature,.cube,.why,.record{grid-template-columns:1fr;gap:32px}
+  .hero figure{max-width:420px}
+  .feature .media{position:static}
+  .bench,.give{grid-template-columns:1fr}
+  .teams{grid-template-columns:1fr;gap:40px}
+  .mosaic{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .chapter{padding-block:72px 0}
+  .layer{grid-template-columns:minmax(0,1fr) auto;gap:8px 16px}
+  .layer p{grid-column:1 / -1;grid-row:2}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div>
+      <div class="kicker">Graduate Software Engineer · Open Source &amp; Linux</div>
+      <h1 style="margin-top:14px">Izhar Ahmad<span>works from the reset vector up.</span></h1>
+      <p class="intro">I write the code that runs before anything else on a chip wakes up: bootloaders, trap handlers and drivers for RISC-V. I learned electronics by taking machines apart in a village in Pakistan, and I want to spend the next part of my career on the open source stack that runs on top of that code.</p>
+      <div class="facts">
+        <span><b>Firmware engineer</b> at Xcelerium</span>
+        <span><b>BSc Electrical Engineering</b>, GIKI</span>
+        <span><b>C · Python · RISC-V</b></span>
+      </div>
+    </div>
+    <figure>
+      <img class="ph" src="img/convocation.jpg" alt="Izhar in convocation robes in front of the I love GIKI sign">
+    </figure>
+  </header>
+
+  <div class="boot" role="img" aria-label="A boot log summarising Izhar's path, from his first teardown to firmware work at Xcelerium">
+    <ol>
+      <li><span class="t">[    0.000]</span><span>reset: village workbench, toy RC motor rewired as a fan</span></li>
+      <li><span class="t">[   12.204]</span><span>school: relay emergency lights, BLDC driver for a salvaged HDD motor <span class="ok">ok</span></span></li>
+      <li><span class="t">[   18.630]</span><span>giki: scholarship accepted, EE (electronics) <span class="ok">ok</span></span></li>
+      <li><span class="t">[   19.112]</span><span>teams: robocup ssl, hammerhead, invictus <span class="ok">online</span></span></li>
+      <li><span class="t">[   21.877]</span><span>zephyr: cubesat iv-tracer firmware up, placed 3rd of 50+</span></li>
+      <li><span class="t">[   22.405]</span><span>xcelerium: train-to-hire complete, cva6 bootloader + trap handler installed</span></li>
+      <li><span class="t">[   22.931]</span><span>uart0: hal ready, tests passing under pytest</span></li>
+      <li><span class="t">[   22.968]</span><span>qemu: kernel built from source, busybox rootfs mounted <span class="ok">ok</span></span></li>
+      <li><span class="t">[   23.000]</span><span><span class="k">next:</span> mount open source linux stack<span class="cur" aria-hidden="true"></span></span></li>
+    </ol>
+  </div>
+
+  <div class="strip" aria-label="Photos from the bench">
+    <img class="ph" src="img/desk-1.jpg" alt="Desk with oscilloscope and microcontroller boards" loading="lazy">
+    <img class="ph" src="img/laser-mill.jpg" alt="Laser milling a PCB at night" loading="lazy">
+    <img class="ph" src="img/robocup-team.jpg" alt="RoboCup team with robots" loading="lazy">
+    <img class="ph" src="img/iv-handheld.jpg" alt="Handheld I-V curve tracer" loading="lazy">
+    <img class="ph" src="img/hh-car.jpg" alt="Team Hammerhead with their car" loading="lazy">
+    <img class="ph" src="img/pcb-milled.jpg" alt="A milled PCB" loading="lazy">
+    <img class="ph" src="img/invictus.jpg" alt="Team Invictus with the aircraft" loading="lazy">
+  </div>
+
+  <section class="chapter" id="stack">
+    <div class="chapter-head">
+      <div class="kicker">Where I sit</div>
+      <h2>The stack, <em>bottom up</em></h2>
+      <p>Linux runs on everything from a Raspberry Pi to a supercomputer, and every one of those machines starts with firmware. Here is the part of the stack I've already worked in, and where I want to go next.</p>
+    </div>
+    <div class="stack">
+      <div class="layer">
+        <div class="name">distro &amp; packaging<small>Ubuntu, packages, users</small></div>
+        <p>Built a root filesystem with <b>BusyBox</b> for a kernel I compiled myself, and booted the whole system on <b>QEMU</b>. Next, learning how Ubuntu builds and ships software: .deb packaging, apt and systemd.</p>
+        <span class="chip own">Own project</span>
+      </div>
+      <div class="layer">
+        <div class="name">linux userspace<small>shell, debugger, servers</small></div>
+        <p>Work on <b>Ubuntu</b> every day, over SSH on remote servers: building and running the toolchain and tests, automating test runs with <b>Bash</b> scripts, and debugging with <b>gdb</b>.</p>
+        <span class="chip work">At work</span>
+      </div>
+      <div class="layer">
+        <div class="name">tests &amp; tooling<small>CI, scripts, harnesses</small></div>
+        <p>Wrote <b>C tests for low-level drivers</b> and a <b>pytest</b> harness that checks them against reference outputs generated in Python, with Bash scripts that run the whole suite automatically.</p>
+        <span class="chip work">At work</span>
+      </div>
+      <div class="layer">
+        <div class="name">toolchain<small>compiler, assembler, linker</small></div>
+        <p><b>Added a new instruction</b> to the RISC-V toolchain, and wrote linker scripts that place code and data where the hardware expects them.</p>
+        <span class="chip work">At work</span>
+      </div>
+      <div class="layer">
+        <div class="name">kernel &amp; rtos<small>scheduling, interrupts</small></div>
+        <p>Compiled a <b>Linux kernel</b> from source and booted it on QEMU. Built the CubeSat's firmware on <b>Zephyr RTOS</b>, and wrote trap and interrupt handling for the CVA6 core with no OS underneath.</p>
+        <span class="chip own">Own project</span>
+      </div>
+      <div class="layer">
+        <div class="name">bootloader &amp; firmware<small>first code after reset</small></div>
+        <p>A <b>bare-metal bootloader</b> and a <b>UART HAL layer</b> for RISC-V CVA6. Earlier firmware on STM32 and PIC18.</p>
+        <span class="chip work">At work</span>
+      </div>
+      <div class="layer">
+        <div class="name">silicon &amp; boards<small>cores, caches, PCBs</small></div>
+        <p>Debugged <b>cache-coherence</b> bugs on a RISC-V core, and designed and milled my own circuit boards in-house.</p>
+        <span class="chip own">Both</span>
+      </div>
+    </div>
+    <div class="legend">
+      <span class="chip work">At work</span> shipped at Xcelerium
+      <span class="chip own">Own project</span> built on my own or at GIKI
+    </div>
+  </section>
+
+  <section class="chapter" id="work">
+    <div class="feature">
+      <div class="media">
+        <img class="ph" src="img/desk-2.jpg" alt="Workbench with scope, power supply and soldering station" loading="lazy">
+        <img class="ph" src="img/portrait.jpg" alt="Izhar standing in a wood-panelled office" loading="lazy">
+      </div>
+      <div>
+        <div class="chapter-head" style="margin-bottom:0">
+          <div class="kicker">Since February 2026 · Xcelerium</div>
+          <h2>Close to the silicon, <em>shipping in C</em></h2>
+          <p>Xcelerium is a Silicon Valley startup building on RISC-V. I joined in February 2026 through its Train-to-Hire programme and now work as a firmware engineer, from Pakistan, with the engineering team in San Jose half a day behind.</p>
+        </div>
+        <ul class="shipped">
+          <li><h4>FFT accuracy: 1.2 dB to 25 dB</h4><p>Optimised the compute kernels behind an FFT routine, raising its signal-to-noise ratio from 1.2 dB to 25 dB.</p></li>
+          <li><h4>Bugs below the debugger</h4><p>Tracked down low-level faults including cache-coherence problems, where the code looks right and the memory disagrees.</p></li>
+          <li><h4>Tests that compare against a reference</h4><p>Wrote C tests for drivers, then used pytest to compare their output against values generated in Python, so regressions show up as a diff.</p></li>
+          <li><h4>A new instruction, end to end</h4><p>Added an instruction to the toolchain so the compiler and assembler could use new hardware.</p></li>
+          <li><h4>Boot, traps and UART</h4><p>A bare-metal bootloader, trap and interrupt handling, and a UART driver layer for the CVA6 core.</p></li>
+        </ul>
+        <div class="lang" aria-label="Languages and tools">
+          <span>C</span><span>C++</span><span>Python</span><span>pytest</span><span>RISC-V asm</span><span>Bash</span><span>Zephyr</span><span>linker scripts</span><span>gdb</span><span>Ubuntu</span><span>SSH</span><span>QEMU</span><span>BusyBox</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter" id="projects">
+    <div class="cube">
+      <figure class="main">
+        <video class="ph" src="vid/cubesat.mp4" poster="img/cubesat.jpg" muted loop playsinline autoplay preload="metadata" aria-label="The CubeSat running on the bench"></video>
+      </figure>
+      <div class="text">
+        <div class="kicker">Beyond coursework · Final-year project</div>
+        <h2>A CubeSat that <em>checks its own solar panels</em></h2>
+        <p>Most universities in Pakistan can't afford to build a CubeSat. I set out to build one cheaply, with an on-board curve tracer that records how its solar panels age in orbit.</p>
+        <p class="muted">Every part was made in-house. I modified a milling machine to make the circuit boards, designed the electronics, and wrote the firmware on Zephyr RTOS.</p>
+        <div class="numbers">
+          <div><b>3rd place</b><small>among 50+ final-year projects</small></div>
+          <div><b>Weeks → hours</b><small>per board revision, with an in-house mill</small></div>
+        </div>
+        <p><a href="https://github.com/izharahmad805/IV-Curve-tracer-Zephyr-" target="_blank" rel="noopener">Firmware source on GitHub</a></p>
+      </div>
+    </div>
+    <div class="mosaic">
+      <figure><img class="ph" src="img/laser-mill.jpg" alt="Modified mill cutting a PCB with a laser" loading="lazy"></figure>
+      <figure><img class="ph" src="img/iv-breadboard.jpg" alt="Curve tracer prototype on a breadboard" loading="lazy"></figure>
+      <figure><img class="ph" src="img/pcb-milled.jpg" alt="Finished milled board" loading="lazy"></figure>
+      <figure><img class="ph" src="img/award.jpg" alt="Receiving a certificate at the Industrial Open House" loading="lazy"></figure>
+    </div>
+
+    <div class="bench">
+      <article>
+        <video class="ph" src="vid/fm-demo.mp4" poster="vid/fm-demo.jpg" playsinline preload="none" controls aria-label="A phone tuned to 103.9 plays music from Izhar's FM transmitter"></video>
+        <h4>An FM transmitter, from scratch</h4>
+        <p>I designed the circuits and checked the spectrum on a scope. In the clip, a phone tuned to 103.9 plays music sent from my laptop. Press play for sound.</p>
+      </article>
+      <article>
+        <div class="duo">
+          <img class="ph" src="img/diode.jpg" alt="Analog oscilloscope showing a diode waveform" loading="lazy">
+          <img class="ph" src="img/diode-2.jpg" alt="Analog oscilloscope showing switching levels" loading="lazy">
+        </div>
+        <h4>How parts really behave</h4>
+        <p>On an old analog Kenwood scope I measured diodes under different conditions and modelled how they actually behave, rather than how the textbook says they should.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="chapter" id="teams">
+    <div class="chapter-head">
+      <div class="kicker">Leadership</div>
+      <h2>Three teams, <em>three hard jobs</em></h2>
+      <p>At GIKI I led the electronics on student teams where the hardware had to work on competition day.</p>
+    </div>
+    <div class="teams">
+      <article>
+        <video class="ph" src="vid/robocup.mp4" poster="vid/robocup.jpg" muted loop playsinline preload="none" controls aria-label="RoboCup robots being built and tested"></video>
+        <div class="role">Founding member</div>
+        <h4>RoboCup Small Size League</h4>
+        <p>Started GIKI's robot-soccer team from nothing, then recruited and trained the students who now run it.</p>
+      </article>
+      <article>
+        <video class="ph" src="vid/hammerhead-drive.mp4" poster="vid/hammerhead-drive.jpg" muted loop playsinline preload="none" controls aria-label="The Hammerhead electric car driving"></video>
+        <div class="role">Electrical Head</div>
+        <h4>Team Hammerhead · Shell Eco-marathon</h4>
+        <p>COVID broke the handover between batches. I rebuilt the car's electrical system from the datasheets up and got it driving for the first time.</p>
+      </article>
+      <article>
+        <img class="ph" src="img/invictus-2.jpg" alt="Two Invictus aircraft" loading="lazy">
+        <div class="role">Avionics Head</div>
+        <h4>Team Invictus · AIAA Design/Build/Fly</h4>
+        <p>Led avionics for SIRUS, the aircraft GIKI students built to represent Pakistan. In 2021 the team ranked 2nd in the competition's proposal phase, ahead of teams from MIT, Stanford and UC Berkeley.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="chapter" id="community">
+    <div class="chapter-head">
+      <div class="kicker">Community &amp; open source</div>
+      <h2>Sharing what <em>I had to figure out alone</em></h2>
+    </div>
+    <div class="give">
+      <div><h4>Open source</h4><p>My firmware is public on <a href="https://github.com/izharahmad805" target="_blank" rel="noopener">GitHub</a>: bare-metal PIC18 and STM32 code, the Zephyr I-V curve tracer, and my PCB designs.</p></div>
+      <div><h4>An embedded systems community</h4><p>For the past year I've run a WhatsApp group where more than 100 students ask about embedded systems, and I point them to a path into the field.</p></div>
+      <div><h4>Teaching juniors</h4><p>A session for my department on how to study embedded systems and how to find work in Pakistan's embedded industry.</p></div>
+      <div><h4>Sundar STEM School</h4><p>Through the RoboCup team we trained school students in robotics and electronics, and that support continues today.</p></div>
+    </div>
+  </section>
+
+  <section class="chapter" id="record">
+    <div class="record">
+      <div class="chapter-head" style="margin:0">
+        <div class="kicker">Academic record</div>
+        <h2>From a village <em>to GIKI</em></h2>
+        <p>Admitted to GIK Institute on a scholarship after teaching myself electronics from Class 2.</p>
+      </div>
+      <div style="overflow-x:auto;min-width:0">
+        <table>
+          <tr><th>BSc Electrical Engineering<small>GIK Institute, Electronics</small></th><td>CGPA 3.2 / 4.0</td></tr>
+          <tr><th>Scholarship<small>GIK Institute</small></th><td>Chief Minister Excellence Scholarship</td></tr>
+          <tr><th>Final-year project<small>CubeSat with on-board I-V tracer</small></th><td>3rd of 50+</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter" id="why">
+    <div class="why">
+      <div class="chapter-head" style="margin:0">
+        <div class="kicker">Why this programme</div>
+        <h2>Open source <em>is how I learned</em></h2>
+      </div>
+      <div class="body">
+        <p>I grew up without labs or mentors. Free tools, public datasheets and other people's open code are how I learned enough to build a satellite. Working on Ubuntu would let me give that back at a scale I couldn't reach on my own.</p>
+        <p>I also want to bring this work home. Free software on cheap hardware is how a school in a village like mine gets a working computer lab, and I want to help students in Pakistan find a path into engineering.</p>
+        <ul class="fit">
+          <li>Comfortable at the low end of the stack, keen to work up it</li>
+          <li>Used to working across time zones with a team in San Jose</li>
+          <li>Happy to travel for sprints and company events twice a year</li>
+          <li>Teaches what he learns, in sessions and in writing</li>
+        </ul>
+        <div class="life">
+          <span><b>7 km</b> runs</span>
+          <span><b>Gym</b> regular</span>
+          <span><b>Rubab</b> · music school</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="close" id="contact">
+    <div class="kicker">Contact</div>
+    <h2>Let's build <em>something.</em></h2>
+    <div class="contact">
+      <span class="addr" id="mail">izharahmad805@gmail.com</span>
+      <button type="button" id="copy">Copy email</button>
+    </div>
+    <p class="muted"><a href="https://github.com/izharahmad805" target="_blank" rel="noopener">GitHub</a> · <a href="https://www.linkedin.com/in/izhar-ahmad-332674251/" target="_blank" rel="noopener">LinkedIn</a></p>
+  </section>
+
+  <footer>Izhar Ahmad · 2026</footer>
+</div>
+
+<script>
+(function(){
+  if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches){
+    document.querySelectorAll("video[autoplay]").forEach(function(v){v.removeAttribute("autoplay");v.pause();v.controls=true;});
+  }
+  var b=document.getElementById("copy");
+  b.addEventListener("click",function(){
+    var t=document.getElementById("mail").textContent;
+    function sel(){var r=document.createRange();r.selectNodeContents(document.getElementById("mail"));var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="Selected, press Ctrl+C";}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){b.textContent="Copied";},sel);}else sel();
+  });
+})();
+</script>
+</body>
+</html>
